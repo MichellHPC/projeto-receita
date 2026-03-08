@@ -1,20 +1,50 @@
 import { useState } from 'react';
+import axios from 'axios';
 
 function Login() {
 
   const [email, setEmail] = useState('');
-  const [senha, setSenha] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Login:', { email, senha });
-    // Aqui você pode adicionar a lógica de autenticação
+
+    //console.log('Login:', { email, password });
+    
+    try {
+        const response = await axios.post('http://localhost:3000/login',
+            JSON.stringify({ email, password }),
+            { 
+                headers: { 'Content-Type': 'application/json' } 
+            }
+        );
+    } catch (error) {
+        if (!error?.response) {
+            setError('Erro ao conectar com o servidor');
+        } else if(error.response.status === 401) {
+            setError('Email ou senha incorretos');
+        }
+    }
   }
 
 
   return (
     <div className="login-form-wrap">
         <h2>Login</h2>
+        {error && (
+          <div className="error-notification">
+            <span className="error-icon">⚠</span>
+            <span className="error-message">{error}</span>
+            <button 
+              className="error-close" 
+              onClick={() => setError('')}
+              type="button"
+            >
+              ×
+            </button>
+          </div>
+        )}
         <form className="login-form" onSubmit={handleSubmit}>
           <input
             type="email"
@@ -26,9 +56,9 @@ function Login() {
           />
           <input
             type="password"
-            id="senha"
-            value={senha}
-            onChange={(e) => setSenha(e.target.value)}
+            id="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             placeholder="Digite sua senha"
             required
           />
