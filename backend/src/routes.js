@@ -2,13 +2,14 @@ const express = require('express');
 
 const routes = express.Router();
 
+const [newEmail, newPassword] = ['michell.rv@gmail.com', 'senha123'];
 //Usuario fixo para teste
 const users = [
     {
         id: 1,
         name: 'John Doe',
-        email: 'john.doe@example.com',
-        password: 'password123'
+        email: newEmail,
+        password: newPassword
     }
 ];  
 
