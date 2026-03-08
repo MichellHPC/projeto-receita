@@ -1,78 +1,80 @@
-import { useState } from 'react';
-import axios from 'axios';
+import AuthForm from './auth/AuthForm';
+import Notification from './common/Notification';
+import RecipeForm from './recipes/RecipeForm';
+import RecipeTable from './recipes/RecipeTable';
+import useAuth from '../hooks/useAuth';
+import useRecipes from '../hooks/useRecipes';
 
 function Login() {
+  const auth = useAuth();
+  const recipes = useRecipes({
+    user: auth.user,
+    setError: auth.setError,
+    setSuccess: auth.setSuccess,
+    clearMessages: auth.clearMessages,
+  });
 
-  const [error, setError] = useState('');
-  
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const handleLogout = () => {
+    recipes.clearAll();
+    auth.handleLogout();
+  };
 
-  const [user, setUser] = useState(null);
+  if (auth.mode === 'app' && auth.user) {
+    return (
+      <div className="app-shell">
+        <div className="top-bar">
+          <div>
+            <h2>Painel de Receitas</h2>
+            <p className="user-label">Usuário: {auth.user.email}</p>
+          </div>
+          <button className="btn-secondary" type="button" onClick={handleLogout}>
+            Sair
+          </button>
+        </div>
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+        <Notification error={auth.error} success={auth.success} onClose={auth.clearMessages} />
 
-    //console.log('Login:', { email, password });
-    
-    try {
-        const response = await axios.post('http://localhost:3000/login',
-            JSON.stringify({ email, password }),
-            { 
-                headers: { 'Content-Type': 'application/json' } 
-            }
-        );
+        <div className="content-grid">
+          <RecipeForm
+            editingId={recipes.editingId}
+            recipeId={recipes.recipeId}
+            recipeNome={recipes.recipeNome}
+            recipeTexto={recipes.recipeTexto}
+            onRecipeIdChange={recipes.setRecipeId}
+            onRecipeNomeChange={recipes.setRecipeNome}
+            onRecipeTextoChange={recipes.setRecipeTexto}
+            onSubmit={recipes.handleRecipeSubmit}
+            onCancelEdit={recipes.resetRecipeForm}
+          />
 
-        console.log('Resposta do servidor:', response.data);
-
-    } catch (error) {
-        if (!error?.response) {
-            setError('Erro ao conectar com o servidor');
-        } else if(error.response.status === 401) {
-            setError('Email ou senha incorretos');
-        }
-    }
+          <RecipeTable
+            recipes={recipes.filteredRecipes}
+            searchTerm={recipes.searchTerm}
+            onSearchTermChange={recipes.setSearchTerm}
+            onEdit={recipes.handleEditRecipe}
+            onDelete={recipes.handleDeleteRecipe}
+            onPrint={recipes.handlePrintRecipe}
+          />
+        </div>
+      </div>
+    );
   }
-
 
   return (
     <div className="login-form-wrap">
-        <h2>Login</h2>
-        {error && (
-          <div className="error-notification">
-            <span className="error-icon">⚠</span>
-            <span className="error-message">{error}</span>
-            <button 
-              className="error-close" 
-              onClick={() => setError('')}
-              type="button"
-            >
-              ×
-            </button>
-          </div>
-        )}
-        <form className="login-form" onSubmit={handleSubmit}>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Digite seu email"
-            required
-          />
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Digite sua senha"
-            required
-          />
-          <button type="submit" className="btn-login">
-            Entrar
-          </button>
-        </form>
-      </div>
+      <Notification error={auth.error} success={auth.success} onClose={auth.clearMessages} />
+      <AuthForm
+        mode={auth.mode}
+        email={auth.email}
+        password={auth.password}
+        confirmPassword={auth.confirmPassword}
+        onEmailChange={auth.setEmail}
+        onPasswordChange={auth.setPassword}
+        onConfirmPasswordChange={auth.setConfirmPassword}
+        onSubmit={auth.handleAuthSubmit}
+        onToggleMode={auth.toggleMode}
+      />
+    </div>
   );
 }
 
