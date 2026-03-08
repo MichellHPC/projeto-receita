@@ -3,9 +3,12 @@ import axios from 'axios';
 
 function Login() {
 
+  const [error, setError] = useState('');
+  
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+
+  const [user, setUser] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -19,6 +22,9 @@ function Login() {
                 headers: { 'Content-Type': 'application/json' } 
             }
         );
+
+        console.log('Resposta do servidor:', response.data);
+
     } catch (error) {
         if (!error?.response) {
             setError('Erro ao conectar com o servidor');
