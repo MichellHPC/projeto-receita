@@ -1,6 +1,44 @@
 const pool = require('../database/connection');
 const { v4: uuidv4 } = require('uuid');
 
+// Login de usuário
+async function login(request, response) {
+    const { email, password } = request.body;
+
+    if (!email || !password) {
+        return response.status(400).json({ error: 'Email e senha são obrigatórios' });
+    }
+
+    try {
+
+        const [users] = await pool.query(
+            'SELECT id, nome, email FROM usuario WHERE email = ? AND senha = ?',
+            [email, password]
+        );
+
+        if (users.length === 0) {
+            return response.status(401).json({ error: 'Email ou senha inválidos' });
+        }
+
+        const user = users[0];
+
+        return response.status(200).json({
+            message: 'Login realizado com sucesso',
+            user: {
+                id: user.id,
+                nome: user.nome,
+                email: user.email
+            }
+        });
+    } catch (error) {
+        
+        return response.status(500).json({ 
+            error: 'Erro ao realizar login',
+            details: error.message
+        });
+    }
+}
+
 // Listar todos os usuários
 async function index(request, response) {
     try {
@@ -35,9 +73,9 @@ async function show(request, response) {
 
 // Criar novo usuário
 async function store(request, response) {
-    const { nome, email, senha } = request.body;
+    const { nome, email, password } = request.body;
     
-    if (!nome || !email || !senha) {
+    if (!nome || !email || !password) {
         return response.status(400).json({ error: 'Nome, email e senha são obrigatórios' });
     }
     
@@ -46,7 +84,7 @@ async function store(request, response) {
     try {
         await pool.query(
             'INSERT INTO usuario (id, nome, email, senha) VALUES (?, ?, ?, ?)',
-            [id, nome, email, senha]
+            [id, nome, email, password]
         );
         
         return response.status(201).json({
@@ -67,9 +105,9 @@ async function store(request, response) {
 // Atualizar usuário
 async function update(request, response) {
     const { id } = request.params;
-    const { nome, email, senha } = request.body;
+    const { nome, email, password } = request.body;
     
-    if (!nome && !email && !senha) {
+    if (!nome && !email && !password) {
         return response.status(400).json({ error: 'Forneça ao menos um campo para atualizar' });
     }
     
@@ -93,9 +131,9 @@ async function update(request, response) {
             fields.push('email = ?');
             values.push(email);
         }
-        if (senha) {
-            fields.push('senha = ?');
-            values.push(senha);
+        if (password) {
+            fields.push('password = ?');
+            values.push(password);
         }
         
         values.push(id);
@@ -136,6 +174,7 @@ async function destroy(request, response) {
 }
 
 module.exports = {
+    login,
     index,
     show,
     store,

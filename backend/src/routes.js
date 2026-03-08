@@ -1,45 +1,11 @@
 const express = require('express');
 const UsuarioController = require('./controllers/UsuarioController');
 const ReceitaController = require('./controllers/ReceitaController');
-const pool = require('./database/connection');
 
 const routes = express.Router();
 
 // Rota de login
-routes.post('/login', async (request, response) => {
-    const { email, senha } = request.body;
-
-    // Verifica se o email e a senha foram fornecidos
-    if (!email || !senha) {
-        return response.status(400).json({ error: 'Email e senha são obrigatórios' });
-    }
-
-    try {
-        const [users] = await pool.query(
-            'SELECT id, nome, email FROM usuario WHERE email = ? AND senha = ?',
-            [email, senha]
-        );
-
-        // Verifica se o usuário foi encontrado
-        if (users.length === 0) {
-            return response.status(401).json({ error: 'Email ou senha inválidos' });
-        }
-
-        const user = users[0];
-
-        return response.status(200).json({
-            message: 'Login realizado com sucesso',
-            user: {
-                id: user.id,
-                nome: user.nome,
-                email: user.email
-            }
-        });
-    } catch (error) {
-        console.error('Erro no login:', error);
-        return response.status(500).json({ error: 'Erro ao realizar login' });
-    }
-});
+routes.post('/login', UsuarioController.login);
 
 // Rotas de Usuário (CRUD completo)
 routes.get('/usuarios', UsuarioController.index);           // Listar todos
