@@ -63,16 +63,16 @@ npm run db:setup
 ### Autenticação
 
 - `POST /login` - Login de usuário
-  - Body: `{ "email": "string", "senha": "string" }`
+  - Body: `{ "email": "string", "password": "string" }`
 
 ### Usuários (CRUD Completo)
 
 - `GET /usuarios` - Listar todos os usuários
 - `GET /usuarios/:id` - Buscar usuário por ID
 - `POST /usuarios` - Criar novo usuário
-  - Body: `{ "nome": "string", "email": "string", "senha": "string" }`
+  - Body: `{ "nome": "string", "email": "string", "password": "string" }`
 - `PUT /usuarios/:id` - Atualizar usuário
-  - Body: `{ "nome": "string", "email": "string", "senha": "string" }` (todos opcionais)
+  - Body: `{ "nome": "string", "email": "string", "password": "string" }` (todos opcionais)
 - `DELETE /usuarios/:id` - Deletar usuário
 
 ### Receitas (CRUD Completo)
@@ -105,6 +105,12 @@ npm run dev
 ```
 
 O servidor estará rodando em `http://localhost:3000`
+
+## Swagger
+
+Com o servidor rodando, acesse a documentacao interativa em:
+
+- `http://localhost:3000/api-docs`
 
 ## Arquivos Docker/Env
 
