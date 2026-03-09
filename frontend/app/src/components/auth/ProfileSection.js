@@ -1,6 +1,10 @@
 import UserProfileForm from './UserProfileForm';
 
 function ProfileSection({ user, onUpdateUser, onDeleteUser }) {
+  const handleDeleteClick = () => {
+    onDeleteUser(user?.id);
+  };
+
   return (
     <section className="profile-screen panel">
       <div className="profile-screen-header">
@@ -12,7 +16,7 @@ function ProfileSection({ user, onUpdateUser, onDeleteUser }) {
       <div className="profile-danger-zone">
         <h4>Zona de perigo</h4>
         <p>Excluir sua conta remove seu acesso ao sistema.</p>
-        <button type="button" className="btn-secondary btn-danger-action" onClick={onDeleteUser}>
+        <button type="button" className="btn-secondary btn-danger-action" onClick={handleDeleteClick}>
           Excluir usuário
         </button>
       </div>

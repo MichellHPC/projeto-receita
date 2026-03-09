@@ -55,12 +55,12 @@ function Login() {
     setActiveScreen('recipes');
   };
 
-  const handleDeleteUser = async () => {
+  const handleDeleteUser = async (userId) => {
     if (!window.confirm('Tem certeza que deseja excluir sua conta? Esta ação não pode ser desfeita.')) {
       return;
     }
 
-    await auth.handleDeleteUser();
+    await auth.handleDeleteUser(userId);
   };
 
   const openRecipeDrawer = () => {
@@ -107,7 +107,7 @@ function Login() {
       <div className="app-shell">
         <AppMenuBar
           title="Titulo do site"
-          userLogin={auth.user.login}
+          userName={auth.user.name || auth.user.login}
           isDarkMode={isDarkMode}
           onToggleTheme={toggleTheme}
           onGoToRecipes={handleRecipeScreenOpen}

@@ -3,7 +3,7 @@ import ThemeSwitch from './ThemeSwitch';
 
 function AppMenuBar({
   title,
-  userLogin,
+  userName,
   isDarkMode,
   onToggleTheme,
   onGoToRecipes,
@@ -64,7 +64,7 @@ function AppMenuBar({
             aria-label="Abrir menu do usuário"
             onClick={() => setIsUserMenuOpen((current) => !current)}
           >
-            <span className="user-name-inline">{userLogin}</span>
+            <span className="user-name-inline">{userName}</span>
             <span className="btn-user-icon" aria-hidden="true">
               👤
             </span>
