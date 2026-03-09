@@ -1,5 +1,6 @@
 const pool = require('../database/connection');
 const { v4: uuidv4 } = require('uuid');
+const bcrypt = require('bcryptjs');
 
 // Login de usuário
 async function login(request, response) {
@@ -10,10 +11,9 @@ async function login(request, response) {
     }
 
     try {
-
         const [users] = await pool.query(
-            'SELECT id, nome, email FROM usuario WHERE email = ? AND senha = ?',
-            [email, password]
+            'SELECT id, nome, email, senha FROM usuario WHERE email = ?',
+            [email]
         );
 
         if (users.length === 0) {
@@ -21,6 +21,11 @@ async function login(request, response) {
         }
 
         const user = users[0];
+        const isPasswordValid = await bcrypt.compare(password, user.senha);
+
+        if (!isPasswordValid) {
+            return response.status(401).json({ error: 'Email ou senha inválidos' });
+        }
 
         return response.status(200).json({
             message: 'Login realizado com sucesso',
@@ -31,11 +36,7 @@ async function login(request, response) {
             }
         });
     } catch (error) {
-        
-        return response.status(500).json({ 
-            error: 'Erro ao realizar login',
-            details: error.message
-        });
+        return response.status(500).json({ error: 'Erro ao realizar login' });
     }
 }
 
@@ -82,9 +83,11 @@ async function store(request, response) {
     const id = uuidv4();
     
     try {
+        const hashedPassword = await bcrypt.hash(password, 12);
+
         await pool.query(
             'INSERT INTO usuario (id, nome, email, senha) VALUES (?, ?, ?, ?)',
-            [id, nome, email, password]
+            [id, nome, email, hashedPassword]
         );
         
         return response.status(201).json({
@@ -132,8 +135,9 @@ async function update(request, response) {
             values.push(email);
         }
         if (password) {
-            fields.push('password = ?');
-            values.push(password);
+            const hashedPassword = await bcrypt.hash(password, 12);
+            fields.push('senha = ?');
+            values.push(hashedPassword);
         }
         
         values.push(id);

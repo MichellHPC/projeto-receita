@@ -1,15 +1,17 @@
 const pool = require('../connection');
 const { v4: uuidv4 } = require('uuid');
+const bcrypt = require('bcryptjs');
 
 async function seed() {
     const connection = await pool.getConnection();
     try {
         // Criar usuário de teste
         const userId = uuidv4();
+        const hashedPassword = await bcrypt.hash('senha123', 12);
         await connection.query(`
             INSERT INTO usuario (id, nome, email, senha)
             VALUES (?, ?, ?, ?)
-        `, [userId, 'usuario-teste', 'usuario-teste@example.com', 'senha123']);
+        `, [userId, 'usuario-teste', 'usuario-teste@example.com', hashedPassword]);
         
         console.log('Usuário de teste criado!');
 
