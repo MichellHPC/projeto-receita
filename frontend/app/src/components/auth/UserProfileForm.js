@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-function UserProfileForm({ user, onSubmit }) {
+function UserProfileForm({ user, onSubmit, compact = false }) {
   const [nome, setNome] = useState('');
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
@@ -21,9 +21,9 @@ function UserProfileForm({ user, onSubmit }) {
   };
 
   return (
-    <div className="panel profile-panel">
-      <h3>Minha Conta</h3>
-      <form className="recipe-form" onSubmit={handleSubmit}>
+    <div className={compact ? 'user-profile-compact' : 'panel profile-panel'}>
+      {!compact && <h3>Minha Conta</h3>}
+      <form className={compact ? 'user-compact-form' : 'recipe-form'} onSubmit={handleSubmit}>
         <label htmlFor="profile-name">Nome</label>
         <input
           id="profile-name"

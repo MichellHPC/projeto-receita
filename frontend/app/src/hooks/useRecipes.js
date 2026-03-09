@@ -112,12 +112,12 @@ function useRecipes({ user, setError, setSuccess, clearMessages }) {
 
     if (validationMessage) {
       setError(validationMessage);
-      return;
+      return false;
     }
 
     if (!user?.id) {
       setError('Usuário não identificado. Faça login novamente.');
-      return;
+      return false;
     }
 
     const payload = {
@@ -150,7 +150,7 @@ function useRecipes({ user, setError, setSuccess, clearMessages }) {
         );
         setSuccess('Receita atualizada com sucesso.');
         resetRecipeForm();
-        return;
+        return true;
       }
 
       const response = await axios.post(`${API_BASE_URL}/receitas`, {
@@ -169,8 +169,10 @@ function useRecipes({ user, setError, setSuccess, clearMessages }) {
 
       setSuccess('Receita cadastrada com sucesso.');
       resetRecipeForm();
+      return true;
     } catch (requestError) {
       setError(getRequestErrorMessage(requestError, 'Falha ao salvar receita.'));
+      return false;
     }
   };
 

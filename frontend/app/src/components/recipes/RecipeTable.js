@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 function RecipeTable({ recipes, categories, searchTerm, onSearchTermChange, onEdit, onDelete, onPrint }) {
   const [openMenuId, setOpenMenuId] = useState(null);
@@ -15,17 +15,54 @@ function RecipeTable({ recipes, categories, searchTerm, onSearchTermChange, onEd
       }
     };
 
+    const handleEscapeKey = (event) => {
+      if (event.key === 'Escape') {
+        setOpenMenuId(null);
+        setSelectedRecipe(null);
+      }
+    };
+
+    const handleViewportChange = () => {
+      setOpenMenuId(null);
+    };
+
     document.addEventListener('click', handleOutsideClick);
+    document.addEventListener('keydown', handleEscapeKey);
+    window.addEventListener('resize', handleViewportChange);
+    window.addEventListener('scroll', handleViewportChange, true);
 
     return () => {
       document.removeEventListener('click', handleOutsideClick);
+      document.removeEventListener('keydown', handleEscapeKey);
+      window.removeEventListener('resize', handleViewportChange);
+      window.removeEventListener('scroll', handleViewportChange, true);
     };
   }, []);
 
   const toggleMenu = (id, event) => {
     const buttonRect = event.currentTarget.getBoundingClientRect();
-    const nextLeft = Math.max(8, buttonRect.right - 150);
-    const nextTop = buttonRect.bottom + 6;
+    const menuWidth = 150;
+    const menuHeight = 140;
+    const viewportPadding = 8;
+
+    let nextLeft = buttonRect.right - menuWidth;
+    let nextTop = buttonRect.bottom + 6;
+
+    if (nextLeft + menuWidth > window.innerWidth - viewportPadding) {
+      nextLeft = window.innerWidth - menuWidth - viewportPadding;
+    }
+
+    if (nextLeft < viewportPadding) {
+      nextLeft = viewportPadding;
+    }
+
+    if (nextTop + menuHeight > window.innerHeight - viewportPadding) {
+      nextTop = buttonRect.top - menuHeight - 6;
+    }
+
+    if (nextTop < viewportPadding) {
+      nextTop = viewportPadding;
+    }
 
     setMenuPosition({ top: nextTop, left: nextLeft });
     setOpenMenuId((currentId) => (currentId === id ? null : id));
@@ -45,10 +82,15 @@ function RecipeTable({ recipes, categories, searchTerm, onSearchTermChange, onEd
     setSelectedRecipe(null);
   };
 
-  const getCategoryName = (idCategoria) => {
-    const category = categories.find((item) => item.id === Number(idCategoria));
-    return category?.nome || '-';
-  };
+  const categoryMap = useMemo(() => {
+    const map = new Map();
+    categories.forEach((item) => {
+      map.set(Number(item.id), item.nome);
+    });
+    return map;
+  }, [categories]);
+
+  const getCategoryName = (idCategoria) => categoryMap.get(Number(idCategoria)) || '-';
 
   useEffect(() => {
     setCurrentPage(1);
@@ -87,7 +129,7 @@ function RecipeTable({ recipes, categories, searchTerm, onSearchTermChange, onEd
             <thead>
               <tr>
                 <th className="name-col">Nome</th>
-                <th>Categoria</th>
+                <th className="category-col">Categoria</th>
                 <th className="action-col">Ações</th>
               </tr>
             </thead>
@@ -95,7 +137,7 @@ function RecipeTable({ recipes, categories, searchTerm, onSearchTermChange, onEd
               {paginatedRecipes.map((recipe) => (
                 <tr key={recipe.id}>
                   <td className="name-col">{recipe.nome}</td>
-                  <td>
+                  <td className="category-col">
                     <span className="category-badge">{getCategoryName(recipe.idCategoria)}</span>
                   </td>
                   <td className="action-col">
@@ -185,8 +227,15 @@ function RecipeTable({ recipes, categories, searchTerm, onSearchTermChange, onEd
       )}
 
       {selectedRecipe && (
-        <div className="recipe-modal-backdrop" role="dialog" aria-modal="true">
-          <div className="recipe-modal">
+        <button
+          type="button"
+          className="recipe-modal-backdrop"
+          role="dialog"
+          aria-modal="true"
+          onClick={closeDetails}
+          aria-label="Fechar detalhes da receita"
+        >
+          <div className="recipe-modal" onClick={(e) => e.stopPropagation()}>
             <div className="recipe-modal-header">
               <h3>Detalhes da Receita</h3>
               <button type="button" className="error-close" onClick={closeDetails}>
@@ -226,7 +275,7 @@ function RecipeTable({ recipes, categories, searchTerm, onSearchTermChange, onEd
               </button>
             </div>
           </div>
-        </div>
+        </button>
       )}
     </div>
   );
