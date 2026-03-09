@@ -167,35 +167,6 @@ function useAuth() {
     }
   };
 
-  const handleDeleteUser = async (userId) => {
-    clearMessages();
-
-    const targetUserId = userId || user?.id;
-
-    if (!targetUserId) {
-      setError('Usuário não identificado. Faça login novamente.');
-      return false;
-    }
-
-    try {
-      await axios.delete(`${API_BASE_URL}/usuarios/${targetUserId}`);
-
-      clearSessionUser();
-      setUser(null);
-      setNome('');
-      setLogin('');
-      setPassword('');
-      setConfirmPassword('');
-      setMode('login');
-      setError('');
-      setSuccess('Usuário excluído com sucesso.');
-      return true;
-    } catch (requestError) {
-      setError(getRequestErrorMessage(requestError, 'Falha ao excluir usuário.'));
-      return false;
-    }
-  };
-
   const handleLogout = () => {
     clearSessionUser();
     setUser(null);
@@ -224,7 +195,6 @@ function useAuth() {
     toggleMode,
     handleAuthSubmit,
     handleUserUpdate,
-    handleDeleteUser,
     handleLogout,
     setError,
     setSuccess,

@@ -55,14 +55,6 @@ function Login() {
     setActiveScreen('recipes');
   };
 
-  const handleDeleteUser = async (userId) => {
-    if (!window.confirm('Tem certeza que deseja excluir sua conta? Esta ação não pode ser desfeita.')) {
-      return;
-    }
-
-    await auth.handleDeleteUser(userId);
-  };
-
   const openRecipeDrawer = () => {
     setIsRecipeDrawerOpen(true);
   };
@@ -118,7 +110,7 @@ function Login() {
         <Notification error={auth.error} success={auth.success} onClose={auth.clearMessages} />
 
         {activeScreen === 'profile' ? (
-          <ProfileSection user={auth.user} onUpdateUser={auth.handleUserUpdate} onDeleteUser={handleDeleteUser} />
+          <ProfileSection user={auth.user} onUpdateUser={auth.handleUserUpdate} />
         ) : (
           <RecipesSection recipes={recipes} onOpenCreate={openRecipeDrawer} onEditRecipe={handleEditRecipe} />
         )}
