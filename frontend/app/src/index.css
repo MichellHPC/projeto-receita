@@ -249,6 +249,76 @@
     @apply rounded border border-accent bg-accent px-4 py-2 text-sm font-semibold text-accent-foreground transition hover:brightness-105;
   }
 
+  .theme-switch {
+    @apply relative flex h-10 w-[92px] items-center justify-between rounded-full border border-border bg-card px-3 transition;
+  }
+
+  .theme-switch.is-light {
+    border-color: #f59e0b;
+    background: linear-gradient(90deg, #fff8e1 0%, #fffbeb 100%);
+    box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.15);
+  }
+
+  .theme-switch.is-dark {
+    border-color: #7c3aed;
+    background: linear-gradient(90deg, #1b1230 0%, #2e1a47 100%);
+    box-shadow: 0 0 0 1px rgba(124, 58, 237, 0.25);
+  }
+
+  .theme-switch-icon {
+    @apply z-10 text-base leading-none;
+  }
+
+  .theme-switch-icon.sun {
+    color: #f8fafc;
+  }
+
+  .theme-switch-icon.moon {
+    color: #cbd5e1;
+  }
+
+  .theme-switch.is-dark .theme-switch-icon.sun {
+    color: #e2e8f0;
+    opacity: 0.55;
+  }
+
+  .theme-switch.is-dark .theme-switch-icon.moon {
+    color: #f8fafc;
+    opacity: 1;
+  }
+
+  .theme-switch.is-light .theme-switch-icon.sun {
+    color: #f8fafc;
+    opacity: 1;
+  }
+
+  .theme-switch.is-light .theme-switch-icon.moon {
+    color: #94a3b8;
+    opacity: 0.55;
+  }
+
+  .theme-switch-thumb {
+    @apply absolute top-1 h-8 w-8 rounded-full border border-border bg-accent transition-all;
+  }
+
+  .theme-switch.is-light .theme-switch-thumb {
+    border-color: #f59e0b;
+    background-color: #fbbf24;
+  }
+
+  .theme-switch.is-dark .theme-switch-thumb {
+    border-color: #6d28d9;
+    background-color: #7c3aed;
+  }
+
+  .theme-switch.is-light .theme-switch-thumb {
+    left: 4px;
+  }
+
+  .theme-switch.is-dark .theme-switch-thumb {
+    left: calc(100% - 36px);
+  }
+
   .btn-recipe-drawer {
     @apply h-10 w-10 rounded-full border border-primary bg-primary text-xl font-bold leading-none text-primary-foreground transition hover:brightness-110;
   }

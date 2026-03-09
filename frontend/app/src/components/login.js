@@ -132,8 +132,21 @@ function Login() {
 
           </div>
           <div className="menu-bar-right">
-            <button className="btn-theme" type="button" onClick={toggleTheme}>
-              {isDarkMode ? 'Modo claro' : 'Modo noturno'}
+            <button
+              className={`theme-switch ${isDarkMode ? 'is-dark' : 'is-light'}`}
+              type="button"
+              role="switch"
+              aria-checked={isDarkMode}
+              aria-label="Alternar tema claro/escuro"
+              onClick={toggleTheme}
+            >
+              <span className="theme-switch-icon sun" aria-hidden="true">
+                ☀
+              </span>
+              <span className="theme-switch-icon moon" aria-hidden="true">
+                🌙
+              </span>
+              <span className="theme-switch-thumb" aria-hidden="true" />
             </button>
 
             <div className="top-user-menu" ref={userMenuRef}>
@@ -218,8 +231,21 @@ function Login() {
   return (
     <div className="login-form-wrap">
       <div className="auth-top-actions">
-        <button className="btn-theme" type="button" onClick={toggleTheme}>
-          {isDarkMode ? 'Modo claro' : 'Modo noturno'}
+        <button
+          className={`theme-switch ${isDarkMode ? 'is-dark' : 'is-light'}`}
+          type="button"
+          role="switch"
+          aria-checked={isDarkMode}
+          aria-label="Alternar tema claro/escuro"
+          onClick={toggleTheme}
+        >
+          <span className="theme-switch-icon sun" aria-hidden="true">
+            ☀
+          </span>
+          <span className="theme-switch-icon moon" aria-hidden="true">
+            🌙
+          </span>
+          <span className="theme-switch-thumb" aria-hidden="true" />
         </button>
       </div>
       <Notification error={auth.error} success={auth.success} onClose={auth.clearMessages} />
