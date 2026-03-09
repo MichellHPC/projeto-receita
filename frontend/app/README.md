@@ -1,70 +1,109 @@
-# Getting Started with Create React App
+# Projeto Receita - Frontend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Aplicacao web React para autenticacao de usuarios e gerenciamento de receitas.
 
-## Available Scripts
+## Funcionalidades
 
-In the project directory, you can run:
+- Cadastro e login de usuario.
+- Persistencia da sessao do usuario no navegador.
+- Alternancia de tema claro/escuro.
+- Edicao de perfil (nome, login e senha).
+- CRUD de receitas:
+  - Criar receita
+  - Listar receitas do usuario
+  - Buscar receitas por texto
+  - Editar receita
+  - Excluir receita
+  - Imprimir receita
+- Exibicao de notificacoes de sucesso e erro.
 
-### `npm start`
+## Tecnologias
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- React (Create React App)
+- Axios (chamadas HTTP)
+- Tailwind CSS (configurado no projeto)
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Requisitos
 
-### `npm test`
+- Node.js 18+ (recomendado)
+- npm 9+ (recomendado)
+- API backend em execucao
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Configuracao
 
-### `npm run build`
+Este frontend consome uma API configurada por variavel de ambiente.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+1. Crie um arquivo `.env` na raiz da pasta `app`.
+2. Adicione:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```env
+REACT_APP_API_URL=http://localhost:3000
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Se a variavel nao for definida, o projeto usa `http://localhost:3000` por padrao.
 
-### `npm run eject`
+## Instalacao
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Na pasta `app`, execute:
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```bash
+npm install
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## Execucao local
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+```bash
+npm start
+```
 
-## Learn More
+A aplicacao sera aberta em `http://localhost:3000`.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## Como usar
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+1. Acesse a tela inicial.
+2. Se ainda nao tiver conta, alterne para modo de cadastro e crie um usuario.
+3. Faca login com usuario e senha.
+4. No menu superior, voce pode:
+	- Abrir tela de receitas
+	- Abrir tela de perfil
+	- Alterar tema claro/escuro
+	- Sair da conta
+5. Na tela de receitas:
+	- Clique em criar receita
+	- Preencha os campos (nome, modo de preparo, categoria, tempo, porcoes, ingredientes)
+	- Salve para cadastrar
+	- Use a busca para filtrar resultados
+	- Edite, exclua ou imprima receitas existentes
 
-### Code Splitting
+## Endpoints esperados da API
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+O frontend utiliza os seguintes endpoints:
 
-### Analyzing the Bundle Size
+- `POST /usuarios` - cadastro de usuario
+- `POST /login` - autenticacao
+- `PUT /usuarios/:id` - atualizacao de perfil
+- `GET /receitas/usuario/:id` - listar receitas do usuario
+- `POST /receitas` - criar receita
+- `PUT /receitas/:id` - atualizar receita
+- `DELETE /receitas/:id` - excluir receita
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## Scripts disponiveis
 
-### Making a Progressive Web App
+- `npm start` - inicia o ambiente de desenvolvimento
+- `npm test` - executa testes em modo interativo
+- `npm run build` - gera build de producao em `build/`
+- `npm run eject` - ejeta configuracoes do CRA (irreversivel)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+## Estrutura principal
 
-### Advanced Configuration
+- `src/components/auth` - componentes de autenticacao e perfil
+- `src/components/recipes` - componentes de listagem/formulario de receitas
+- `src/components/common` - componentes compartilhados (menu, notificacao, tema)
+- `src/hooks/useAuth.js` - regras de autenticacao e sessao
+- `src/hooks/useRecipes.js` - regras de negocio das receitas
+- `src/utils` - utilitarios (validacao, impressao, storage)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+## Observacoes
 
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- A sessao do usuario e a preferencia de tema ficam salvas no `localStorage`.
+- Para impressao, o navegador precisa permitir abertura de nova janela/pop-up.
