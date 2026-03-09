@@ -260,6 +260,47 @@
     @apply flex flex-wrap gap-2;
   }
 
+  .action-buttons {
+    @apply items-center justify-center gap-2;
+  }
+
+  .name-col {
+    @apply text-left;
+  }
+
+  .action-col {
+    @apply text-center;
+  }
+
+  .compact-table th.action-col,
+  .compact-table td.action-col {
+    @apply text-center;
+  }
+
+  .compact-table-wrap {
+    @apply overflow-x-auto;
+  }
+
+  .compact-table th,
+  .compact-table td {
+    @apply whitespace-nowrap;
+  }
+
+  .category-badge {
+    @apply inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold;
+    background-color: #d8b4fe;
+    color: #4a1d96;
+  }
+
+  .dark .category-badge {
+    background-color: #4ade80;
+    color: #052e16;
+  }
+
+  .details-btn {
+    @apply border-border bg-card text-foreground;
+  }
+
   .dropdown-wrap {
     @apply relative;
   }
@@ -268,8 +309,16 @@
     @apply min-w-[92px];
   }
 
+  .icon-gear-btn {
+    @apply min-w-0 px-3 text-base leading-none;
+  }
+
   .dropdown-menu {
     @apply absolute right-0 top-9 z-20 min-w-[140px] rounded border border-border bg-popover p-1 shadow-md;
+  }
+
+  .dropdown-menu-fixed {
+    @apply fixed right-auto top-auto z-50;
   }
 
   .dropdown-item {
@@ -321,5 +370,47 @@
 
   .error-close {
     @apply h-6 w-6 rounded border border-current bg-transparent p-0 text-base leading-none;
+  }
+
+  .recipe-modal-backdrop {
+    @apply fixed inset-0 z-40 flex items-center justify-center bg-black/50 p-4;
+  }
+
+  .recipe-modal {
+    @apply max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded border border-border bg-card p-5 shadow-xl;
+  }
+
+  .recipe-modal-header {
+    @apply mb-4 flex items-center justify-between;
+  }
+
+  .recipe-modal-body {
+    @apply space-y-2 text-sm;
+  }
+
+  .recipe-modal-content {
+    @apply rounded border border-border bg-muted p-3 whitespace-pre-wrap;
+  }
+
+  .recipe-modal-footer {
+    @apply mt-4 flex justify-end;
+  }
+
+  .table-pagination {
+    @apply mt-4 flex flex-wrap items-center justify-center gap-3;
+  }
+
+  .pagination-label {
+    @apply text-sm font-medium text-muted-foreground;
+  }
+
+  @media (max-width: 768px) {
+    .action-buttons {
+      @apply justify-center;
+    }
+
+    .table-pagination {
+      @apply gap-2;
+    }
   }
 }
