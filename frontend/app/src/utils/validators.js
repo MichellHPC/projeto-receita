@@ -3,7 +3,11 @@ export const validateEmail = (value) => {
   return emailRegex.test(value);
 };
 
-export const validateAuthData = ({ mode, email, password, confirmPassword, users }) => {
+export const validateAuthData = ({ mode, nome, email, password, confirmPassword }) => {
+  if (mode === 'register' && (!nome.trim() || nome.trim().length < 3)) {
+    return 'O nome deve ter no mínimo 3 caracteres.';
+  }
+
   if (!validateEmail(email)) {
     return 'Informe um e-mail válido.';
   }
@@ -16,11 +20,22 @@ export const validateAuthData = ({ mode, email, password, confirmPassword, users
     if (confirmPassword !== password) {
       return 'A confirmação de senha não confere.';
     }
+  }
 
-    const alreadyExists = users.some((user) => user.email.toLowerCase() === email.toLowerCase());
-    if (alreadyExists) {
-      return 'Já existe um usuário cadastrado com esse e-mail.';
-    }
+  return '';
+};
+
+export const validateUserUpdateData = ({ nome, email, password }) => {
+  if (!nome.trim() || nome.trim().length < 3) {
+    return 'O nome deve ter no mínimo 3 caracteres.';
+  }
+
+  if (!validateEmail(email)) {
+    return 'Informe um e-mail válido.';
+  }
+
+  if (password.trim() && password.trim().length < 6) {
+    return 'A nova senha deve ter no mínimo 6 caracteres.';
   }
 
   return '';

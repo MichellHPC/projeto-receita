@@ -1,4 +1,5 @@
 import AuthForm from './auth/AuthForm';
+import UserProfileForm from './auth/UserProfileForm';
 import Notification from './common/Notification';
 import RecipeForm from './recipes/RecipeForm';
 import RecipeTable from './recipes/RecipeTable';
@@ -34,6 +35,8 @@ function Login() {
 
         <Notification error={auth.error} success={auth.success} onClose={auth.clearMessages} />
 
+        <UserProfileForm user={auth.user} onSubmit={auth.handleUserUpdate} />
+
         <div className="content-grid">
           <RecipeForm
             editingId={recipes.editingId}
@@ -63,9 +66,11 @@ function Login() {
       <Notification error={auth.error} success={auth.success} onClose={auth.clearMessages} />
       <AuthForm
         mode={auth.mode}
+        nome={auth.nome}
         email={auth.email}
         password={auth.password}
         confirmPassword={auth.confirmPassword}
+        onNomeChange={auth.setNome}
         onEmailChange={auth.setEmail}
         onPasswordChange={auth.setPassword}
         onConfirmPasswordChange={auth.setConfirmPassword}

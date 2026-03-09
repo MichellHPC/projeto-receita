@@ -1,8 +1,10 @@
 function AuthForm({
   mode,
+  nome,
   email,
   password,
   confirmPassword,
+  onNomeChange,
   onEmailChange,
   onPasswordChange,
   onConfirmPasswordChange,
@@ -14,6 +16,17 @@ function AuthForm({
       <h2>{mode === 'login' ? 'Login' : 'Cadastro de Usuário'}</h2>
 
       <form className="login-form" onSubmit={onSubmit}>
+        {mode === 'register' && (
+          <input
+            type="text"
+            id="nome"
+            value={nome}
+            onChange={(e) => onNomeChange(e.target.value)}
+            placeholder="Digite seu nome"
+            required
+          />
+        )}
+
         <input
           type="email"
           id="email"

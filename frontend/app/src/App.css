@@ -236,6 +236,10 @@ textarea {
   gap: 20px;
 }
 
+.profile-panel {
+  margin-bottom: 20px;
+}
+
 .panel {
   border: 1px solid #e7e7e7;
   border-radius: 8px;
@@ -316,6 +320,16 @@ th {
   border-radius: 4px;
   font-size: 12px;
   cursor: pointer;
+}
+
+@media (max-width: 900px) {
+  .content-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .login-form-wrap {
+    width: 92%;
+  }
 }
 
 .btn-danger {
