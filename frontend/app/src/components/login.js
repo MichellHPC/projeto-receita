@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import AuthForm from './auth/AuthForm';
 import UserProfileForm from './auth/UserProfileForm';
 import Notification from './common/Notification';
@@ -6,7 +7,10 @@ import RecipeTable from './recipes/RecipeTable';
 import useAuth from '../hooks/useAuth';
 import useRecipes from '../hooks/useRecipes';
 
+const THEME_STORAGE_KEY = 'pr_theme';
+
 function Login() {
+  const [isDarkMode, setIsDarkMode] = useState(false);
   const auth = useAuth();
   const recipes = useRecipes({
     user: auth.user,
@@ -14,6 +18,23 @@ function Login() {
     setSuccess: auth.setSuccess,
     clearMessages: auth.clearMessages,
   });
+
+  useEffect(() => {
+    const storedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const shouldUseDark = storedTheme ? storedTheme === 'dark' : prefersDark;
+
+    setIsDarkMode(shouldUseDark);
+  }, []);
+
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', isDarkMode);
+    localStorage.setItem(THEME_STORAGE_KEY, isDarkMode ? 'dark' : 'light');
+  }, [isDarkMode]);
+
+  const toggleTheme = () => {
+    setIsDarkMode((current) => !current);
+  };
 
   const handleLogout = () => {
     recipes.clearAll();
@@ -28,9 +49,14 @@ function Login() {
             <h2>Painel de Receitas</h2>
             <p className="user-label">Usuário: {auth.user.email}</p>
           </div>
-          <button className="btn-secondary" type="button" onClick={handleLogout}>
-            Sair
-          </button>
+          <div className="top-actions">
+            <button className="btn-theme" type="button" onClick={toggleTheme}>
+              {isDarkMode ? 'Modo claro' : 'Modo noturno'}
+            </button>
+            <button className="btn-secondary" type="button" onClick={handleLogout}>
+              Sair
+            </button>
+          </div>
         </div>
 
         <Notification error={auth.error} success={auth.success} onClose={auth.clearMessages} />
@@ -63,6 +89,11 @@ function Login() {
 
   return (
     <div className="login-form-wrap">
+      <div className="auth-top-actions">
+        <button className="btn-theme" type="button" onClick={toggleTheme}>
+          {isDarkMode ? 'Modo claro' : 'Modo noturno'}
+        </button>
+      </div>
       <Notification error={auth.error} success={auth.success} onClose={auth.clearMessages} />
       <AuthForm
         mode={auth.mode}

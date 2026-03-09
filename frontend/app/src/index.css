@@ -194,6 +194,18 @@
     @apply mb-5 flex flex-col gap-4 md:flex-row md:items-center md:justify-between;
   }
 
+  .top-actions {
+    @apply flex flex-wrap items-center gap-2;
+  }
+
+  .auth-top-actions {
+    @apply mb-3 flex justify-end;
+  }
+
+  .btn-theme {
+    @apply rounded border border-accent bg-accent px-4 py-2 text-sm font-semibold text-accent-foreground transition hover:brightness-105;
+  }
+
   .top-bar h2 {
     @apply text-left text-3xl;
   }
@@ -244,6 +256,30 @@
 
   .table-actions {
     @apply flex flex-wrap gap-2;
+  }
+
+  .dropdown-wrap {
+    @apply relative;
+  }
+
+  .dropdown-toggle {
+    @apply min-w-[92px];
+  }
+
+  .dropdown-menu {
+    @apply absolute right-0 top-9 z-20 min-w-[140px] rounded border border-border bg-popover p-1 shadow-md;
+  }
+
+  .dropdown-item {
+    @apply block w-full rounded border-none bg-transparent px-3 py-2 text-left text-sm text-popover-foreground transition hover:bg-muted;
+  }
+
+  .dropdown-item-danger {
+    @apply text-destructive;
+  }
+
+  .dropdown-item-print {
+    @apply text-secondary;
   }
 
   .btn-small {

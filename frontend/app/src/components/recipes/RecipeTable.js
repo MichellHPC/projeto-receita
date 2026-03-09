@@ -1,6 +1,34 @@
+import { useEffect, useRef, useState } from 'react';
+
 function RecipeTable({ recipes, searchTerm, onSearchTermChange, onEdit, onDelete, onPrint }) {
+  const [openMenuId, setOpenMenuId] = useState(null);
+  const tableRef = useRef(null);
+
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (!tableRef.current?.contains(event.target)) {
+        setOpenMenuId(null);
+      }
+    };
+
+    document.addEventListener('click', handleOutsideClick);
+
+    return () => {
+      document.removeEventListener('click', handleOutsideClick);
+    };
+  }, []);
+
+  const toggleMenu = (id) => {
+    setOpenMenuId((currentId) => (currentId === id ? null : id));
+  };
+
+  const handleAction = (action) => {
+    setOpenMenuId(null);
+    action();
+  };
+
   return (
-    <div className="panel">
+    <div className="panel" ref={tableRef}>
       <h3>Receitas Cadastradas</h3>
       <input
         type="text"
@@ -30,24 +58,43 @@ function RecipeTable({ recipes, searchTerm, onSearchTermChange, onEdit, onDelete
                   <td>{recipe.nome}</td>
                   <td className="text-col">{recipe.texto}</td>
                   <td>
-                    <div className="table-actions">
-                      <button type="button" className="btn-small" onClick={() => onEdit(recipe)}>
-                        Editar
-                      </button>
+                    <div className="table-actions dropdown-wrap">
                       <button
                         type="button"
-                        className="btn-small btn-danger"
-                        onClick={() => onDelete(recipe.id)}
+                        className="btn-small dropdown-toggle"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleMenu(recipe.id);
+                        }}
                       >
-                        Excluir
+                        Ações
                       </button>
-                      <button
-                        type="button"
-                        className="btn-small btn-print"
-                        onClick={() => onPrint(recipe)}
-                      >
-                        Imprimir
-                      </button>
+
+                      {openMenuId === recipe.id && (
+                        <div className="dropdown-menu" role="menu">
+                          <button
+                            type="button"
+                            className="dropdown-item"
+                            onClick={() => handleAction(() => onEdit(recipe))}
+                          >
+                            Editar
+                          </button>
+                          <button
+                            type="button"
+                            className="dropdown-item dropdown-item-danger"
+                            onClick={() => handleAction(() => onDelete(recipe.id))}
+                          >
+                            Excluir
+                          </button>
+                          <button
+                            type="button"
+                            className="dropdown-item dropdown-item-print"
+                            onClick={() => handleAction(() => onPrint(recipe))}
+                          >
+                            Imprimir
+                          </button>
+                        </div>
+                      )}
                     </div>
                   </td>
                 </tr>
