@@ -1,118 +1,156 @@
 # Projeto Receita - Backend
 
-## Configuração do Banco de Dados
+Backend da API de receitas com Node.js, Express e MySQL.
 
-### 1. Subir MySQL com Docker (localhost)
+## Como iniciar o projeto
+
+### 1. Instalar dependencias
 
 ```bash
+npm install
+```
+
+### 2. Subir o container do banco MySQL
+
+```bash
+# opcao 1 (script do projeto)
+npm run db:up
+
+# opcao 2 (comando docker direto)
 docker compose up -d
 ```
 
-O container sobe com:
+Configuracao atual do container MySQL:
 
-- host: localhost
-- porta: 3306
-- banco: projeto_receitas
-- usuário: usuario_teste
-- senha: senha123
+- host: `localhost`
+- porta: `3306`
+- database: `teste_receitas_rg_sistemas`
+- usuario: `usuario_teste`
+- senha: `senha123`
+- root password: `root123`
 
-### 2. Configure a conexão
-
-Edite o arquivo `src/database/connection.js` com suas credenciais MySQL:
-
-- **host**: localhost
-- **user**: usuario_teste
-- **password**: senha123
-- **database**: projeto_receitas
-
-### 3. Execute as migrations e seeds
+### 3. Rodar migrations e seed
 
 ```bash
-# Executar migrations (criar tabelas)
+# cria as tabelas
 npm run migrate
 
-# Executar seeds (dados de teste)
+# popula dados iniciais
 npm run seed
 
-# Ou executar ambos de uma vez
+# ou executa os dois em sequencia
 npm run db:setup
 ```
 
-## Estrutura do Banco de Dados
-
-### Tabela: usuario
-
-- `id` (CHAR(36)) - UUID, chave primária
-- `nome` (VARCHAR(255)) - Nome do usuário
-- `email` (VARCHAR(255)) - Email único
-- `senha` (VARCHAR(255)) - Senha
-- `created_at` (TIMESTAMP) - Data de criação
-- `updated_at` (TIMESTAMP) - Data de atualização
-
-### Tabela: receitas
-
-- `id` (CHAR(36)) - UUID, chave primária
-- `criador_id` (CHAR(36)) - FK para usuario.id
-- `nome` (VARCHAR(255)) - Nome da receita
-- `descricao` (TEXT) - Descrição da receita
-- `created_at` (TIMESTAMP) - Data de criação
-- `updated_at` (TIMESTAMP) - Data de atualização
-
-## Rotas da API
-
-### Autenticação
-
-- `POST /login` - Login de usuário
-  - Body: `{ "email": "string", "password": "string" }`
-
-### Usuários (CRUD Completo)
-
-- `GET /usuarios` - Listar todos os usuários
-- `GET /usuarios/:id` - Buscar usuário por ID
-- `POST /usuarios` - Criar novo usuário
-  - Body: `{ "nome": "string", "email": "string", "password": "string" }`
-- `PUT /usuarios/:id` - Atualizar usuário
-  - Body: `{ "nome": "string", "email": "string", "password": "string" }` (todos opcionais)
-- `DELETE /usuarios/:id` - Deletar usuário
-
-### Receitas (CRUD Completo)
-
-- `GET /receitas` - Listar todas as receitas
-- `GET /receitas/:id` - Buscar receita por ID
-- `GET /receitas/usuario/:criador_id` - Buscar receitas de um usuário específico
-- `POST /receitas` - Criar nova receita
-  - Body: `{ "criador_id": "string", "nome": "string", "descricao": "string" }`
-- `PUT /receitas/:id` - Atualizar receita
-  - Body: `{ "nome": "string", "descricao": "string" }` (ambos opcionais)
-- `DELETE /receitas/:id` - Deletar receita
-
-## Dados de Teste (Seeds)
-
-**Usuário:**
-
-- Email: <michell.rv@gmail.com>
-- Senha: senha123
-
-**Receita:**
-
-- Nome: Bolo de Chocolate
-- Descrição: Um delicioso bolo de chocolate com cobertura cremosa.
-
-## Executar o Servidor
+### 4. Iniciar a API
 
 ```bash
 npm run dev
 ```
 
-O servidor estará rodando em `http://localhost:3000`
+Aplicacao disponivel em:
 
-## Swagger
+- API: `http://localhost:3000`
+- Swagger: `http://localhost:3000/api-docs`
 
-Com o servidor rodando, acesse a documentacao interativa em:
+### 5. Parar o container do banco
 
-- `http://localhost:3000/api-docs`
+```bash
+# opcao 1 (script do projeto)
+npm run db:down
 
-## Arquivos Docker/Env
+# opcao 2 (comando docker direto)
+docker compose down
+```
 
-- `docker-compose.yml` - MySQL local
-- `.env.example` - exemplo de variáveis de conexão
+## Estrutura do banco de dados (migrations atuais)
+
+### Migration `001_create_usuario_table.js`
+
+Cria a tabela `usuarios`:
+
+- `id` `INT UNSIGNED` auto incremento, PK
+- `nome` `VARCHAR(100)`
+- `login` `VARCHAR(100)` unico
+- `senha` `VARCHAR(100)`
+- `criado_em` `DATETIME`
+- `alterado_em` `DATETIME`
+
+### Migration `002_create_receitas_table.js`
+
+Cria a tabela `categorias`:
+
+- `id` `INT UNSIGNED` auto incremento, PK
+- `nome` `VARCHAR(100)` unico
+
+### Migration `003_create_receitas_table.js`
+
+Cria a tabela `receitas`:
+
+- `id` `INT UNSIGNED` auto incremento, PK
+- `id_usuarios` `INT UNSIGNED` (FK para `usuarios.id`)
+- `id_categorias` `INT UNSIGNED` (FK para `categorias.id`)
+- `nome` `VARCHAR(45)`
+- `tempo_preparo_minutos` `INT UNSIGNED`
+- `porcoes` `INT UNSIGNED`
+- `modo_preparo` `TEXT` (obrigatorio)
+- `ingredientes` `TEXT`
+- `criado_em` `DATETIME`
+- `alterado_em` `DATETIME`
+
+Regras de chave estrangeira da tabela `receitas`:
+
+- `id_usuarios`: `ON DELETE RESTRICT`, `ON UPDATE CASCADE`
+- `id_categorias`: `ON DELETE CASCADE`, `ON UPDATE CASCADE`
+
+## Dados iniciais (seed atual)
+
+Arquivo: `src/database/seeds/001_seed_initial_data.js`
+
+- Insere/atualiza 13 categorias fixas (ex.: `Bolos e tortas doces`, `Carnes`, `Massas`, `Bebidas`, `Doces e sobremesas`).
+- Cria/atualiza usuario de teste:
+  - nome: `Usuario Teste`
+  - login: `usuario.teste`
+  - senha: `senha123`
+- Insere uma receita de teste:
+  - nome: `Bolo de Chocolate`
+  - categoria: `Bolos e tortas doces` (id 1)
+  - tempo de preparo: `60` minutos
+  - porcoes: `8`
+
+## Rotas da API
+
+### Autenticacao
+
+- `POST /login`
+  - body: `{ "login": "string", "password": "string" }`
+
+### Usuarios
+
+- `GET /usuarios`
+- `GET /usuarios/:id`
+- `POST /usuarios`
+  - body: `{ "nome": "string", "login": "string", "password": "string" }`
+- `PUT /usuarios/:id`
+  - body (campos opcionais): `{ "nome": "string", "login": "string", "password": "string" }`
+- `DELETE /usuarios/:id`
+
+### Receitas
+
+- `GET /receitas`
+- `GET /receitas/:id`
+- `GET /receitas/usuario/:id_usuario`
+- `POST /receitas`
+  - body: `{ "id_usuarios": 1, "id_categorias": 1, "nome": "string", "tempo_preparo_minutos": 60, "porcoes": 8, "modo_preparo": "string", "ingredientes": "string" }`
+- `PUT /receitas/:id`
+  - body (campos opcionais): `{ "id_usuarios": 1, "id_categorias": 1, "nome": "string", "tempo_preparo_minutos": 60, "porcoes": 8, "modo_preparo": "string", "ingredientes": "string" }`
+- `DELETE /receitas/:id`
+
+## Scripts uteis
+
+- `npm run dev`: inicia o servidor com `nodemon`
+- `npm run migrate`: executa migrations
+- `npm run seed`: executa seeds
+- `npm run db:setup`: executa migrations + seeds
+- `npm run db:up`: sobe o MySQL com Docker
+- `npm run db:down`: derruba o MySQL com Docker
