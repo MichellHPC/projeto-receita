@@ -9,7 +9,7 @@ async function seed() {
         await connection.query(`
             INSERT INTO usuario (id, nome, email, senha)
             VALUES (?, ?, ?, ?)
-        `, [userId, 'John Doe', 'michell.rv@gmail.com', 'senha123']);
+        `, [userId, 'usuario-teste', 'usuario-teste@example.com', 'senha123']);
         
         console.log('Usuário de teste criado!');
 
