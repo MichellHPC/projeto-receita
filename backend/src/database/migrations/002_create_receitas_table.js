@@ -4,17 +4,14 @@ async function up() {
     const connection = await pool.getConnection();
     try {
         await connection.query(`
-            CREATE TABLE IF NOT EXISTS receitas (
-                id CHAR(36) PRIMARY KEY,
-                criador_id CHAR(36) NOT NULL,
-                nome VARCHAR(255) NOT NULL,
-                descricao TEXT,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                FOREIGN KEY (criador_id) REFERENCES usuario(id) ON DELETE CASCADE
+            CREATE TABLE IF NOT EXISTS categorias (
+                id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+                nome VARCHAR(100) NULL,
+                PRIMARY KEY (id),
+                UNIQUE INDEX nome_UNIQUE (nome ASC)
             )
         `);
-        console.log('Tabela receitas criada com sucesso!');
+        console.log('Tabela categorias criada com sucesso!');
     } finally {
         connection.release();
     }
@@ -23,8 +20,8 @@ async function up() {
 async function down() {
     const connection = await pool.getConnection();
     try {
-        await connection.query('DROP TABLE IF EXISTS receitas');
-        console.log('Tabela receitas removida com sucesso!');
+        await connection.query('DROP TABLE IF EXISTS categorias');
+        console.log('Tabela categorias removida com sucesso!');
     } finally {
         connection.release();
     }

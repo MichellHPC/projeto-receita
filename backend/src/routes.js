@@ -17,7 +17,7 @@ routes.delete('/usuarios/:id', UsuarioController.destroy);  // Deletar
 // Rotas de Receitas (CRUD completo)
 routes.get('/receitas', ReceitaController.index);                        // Listar todas
 routes.get('/receitas/:id', ReceitaController.show);                     // Buscar por ID
-routes.get('/receitas/usuario/:criador_id', ReceitaController.byUser);  // Buscar por usuário
+routes.get('/receitas/usuario/:id_usuario', ReceitaController.byUser);  // Buscar por usuário
 routes.post('/receitas', ReceitaController.store);                       // Criar
 routes.put('/receitas/:id', ReceitaController.update);                   // Atualizar
 routes.delete('/receitas/:id', ReceitaController.destroy);               // Deletar

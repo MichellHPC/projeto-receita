@@ -1,30 +1,29 @@
 const pool = require('../database/connection');
-const { v4: uuidv4 } = require('uuid');
 const bcrypt = require('bcryptjs');
 
 // Login de usuário
 async function login(request, response) {
-    const { email, password } = request.body;
+    const { login, password } = request.body;
 
-    if (!email || !password) {
-        return response.status(400).json({ error: 'Email e senha são obrigatórios' });
+    if (!login || !password) {
+        return response.status(400).json({ error: 'Login e senha são obrigatórios' });
     }
 
     try {
         const [users] = await pool.query(
-            'SELECT id, nome, email, senha FROM usuario WHERE email = ?',
-            [email]
+            'SELECT id, nome, login, senha, criado_em, alterado_em FROM usuarios WHERE login = ?',
+            [login]
         );
 
         if (users.length === 0) {
-            return response.status(401).json({ error: 'Email ou senha inválidos' });
+            return response.status(401).json({ error: 'Login ou senha inválidos' });
         }
 
         const user = users[0];
         const isPasswordValid = await bcrypt.compare(password, user.senha);
 
         if (!isPasswordValid) {
-            return response.status(401).json({ error: 'Email ou senha inválidos' });
+            return response.status(401).json({ error: 'Login ou senha inválidos' });
         }
 
         return response.status(200).json({
@@ -32,7 +31,9 @@ async function login(request, response) {
             user: {
                 id: user.id,
                 nome: user.nome,
-                email: user.email
+                login: user.login,
+                criado_em: user.criado_em,
+                alterado_em: user.alterado_em
             }
         });
     } catch (error) {
@@ -43,7 +44,7 @@ async function login(request, response) {
 // Listar todos os usuários
 async function index(request, response) {
     try {
-        const [users] = await pool.query('SELECT id, nome, email, created_at, updated_at FROM usuario');
+        const [users] = await pool.query('SELECT id, nome, login, criado_em, alterado_em FROM usuarios');
         return response.status(200).json(users);
     } catch (error) {
         console.error('Erro ao listar usuários:', error);
@@ -57,7 +58,7 @@ async function show(request, response) {
     
     try {
         const [users] = await pool.query(
-            'SELECT id, nome, email, created_at, updated_at FROM usuario WHERE id = ?',
+            'SELECT id, nome, login, criado_em, alterado_em FROM usuarios WHERE id = ?',
             [id]
         );
         
@@ -74,31 +75,34 @@ async function show(request, response) {
 
 // Criar novo usuário
 async function store(request, response) {
-    const { nome, email, password } = request.body;
+    const { nome, login, password } = request.body;
     
-    if (!nome || !email || !password) {
-        return response.status(400).json({ error: 'Nome, email e senha são obrigatórios' });
+    if (!login || !password) {
+        return response.status(400).json({ error: 'Login e senha são obrigatórios' });
     }
-    
-    const id = uuidv4();
     
     try {
         const hashedPassword = await bcrypt.hash(password, 12);
 
         await pool.query(
-            'INSERT INTO usuario (id, nome, email, senha) VALUES (?, ?, ?, ?)',
-            [id, nome, email, hashedPassword]
+            'INSERT INTO usuarios (nome, login, senha, criado_em, alterado_em) VALUES (?, ?, ?, NOW(), NOW())',
+            [nome || null, login, hashedPassword]
+        );
+
+        const [[createdUser]] = await pool.query(
+            'SELECT id, nome, login, criado_em, alterado_em FROM usuarios WHERE login = ?',
+            [login]
         );
         
         return response.status(201).json({
             message: 'Usuário criado com sucesso',
-            user: { id, nome, email }
+            user: createdUser
         });
     } catch (error) {
         console.error('Erro ao criar usuário:', error);
         
         if (error.code === 'ER_DUP_ENTRY') {
-            return response.status(409).json({ error: 'Email já cadastrado' });
+            return response.status(409).json({ error: 'Login já cadastrado' });
         }
         
         return response.status(500).json({ error: 'Erro ao criar usuário' });
@@ -108,15 +112,15 @@ async function store(request, response) {
 // Atualizar usuário
 async function update(request, response) {
     const { id } = request.params;
-    const { nome, email, password } = request.body;
+    const { nome, login, password } = request.body;
     
-    if (!nome && !email && !password) {
+    if (!nome && !login && !password) {
         return response.status(400).json({ error: 'Forneça ao menos um campo para atualizar' });
     }
     
     try {
         // Verifica se o usuário existe
-        const [users] = await pool.query('SELECT id FROM usuario WHERE id = ?', [id]);
+        const [users] = await pool.query('SELECT id FROM usuarios WHERE id = ?', [id]);
         
         if (users.length === 0) {
             return response.status(404).json({ error: 'Usuário não encontrado' });
@@ -130,20 +134,22 @@ async function update(request, response) {
             fields.push('nome = ?');
             values.push(nome);
         }
-        if (email) {
-            fields.push('email = ?');
-            values.push(email);
+        if (login) {
+            fields.push('login = ?');
+            values.push(login);
         }
         if (password) {
             const hashedPassword = await bcrypt.hash(password, 12);
             fields.push('senha = ?');
             values.push(hashedPassword);
         }
+
+        fields.push('alterado_em = NOW()');
         
         values.push(id);
         
         await pool.query(
-            `UPDATE usuario SET ${fields.join(', ')} WHERE id = ?`,
+            `UPDATE usuarios SET ${fields.join(', ')} WHERE id = ?`,
             values
         );
         
@@ -152,7 +158,7 @@ async function update(request, response) {
         console.error('Erro ao atualizar usuário:', error);
         
         if (error.code === 'ER_DUP_ENTRY') {
-            return response.status(409).json({ error: 'Email já cadastrado' });
+            return response.status(409).json({ error: 'Login já cadastrado' });
         }
         
         return response.status(500).json({ error: 'Erro ao atualizar usuário' });
@@ -164,7 +170,7 @@ async function destroy(request, response) {
     const { id } = request.params;
     
     try {
-        const [result] = await pool.query('DELETE FROM usuario WHERE id = ?', [id]);
+        const [result] = await pool.query('DELETE FROM usuarios WHERE id = ?', [id]);
         
         if (result.affectedRows === 0) {
             return response.status(404).json({ error: 'Usuário não encontrado' });
