@@ -80,14 +80,6 @@ function Login() {
     setActiveScreen('recipes');
   };
 
-  const handleDeleteUser = async () => {
-    if (!window.confirm('Tem certeza que deseja excluir sua conta? Esta ação não pode ser desfeita.')) {
-      return;
-    }
-
-    await auth.handleDeleteUser();
-  };
-
   const openRecipeDrawer = () => {
     setIsRecipeDrawerOpen(true);
   };
@@ -132,7 +124,7 @@ function Login() {
       <div className="app-shell">
         <div className="menu-bar">
           <div className="menu-bar-left">
-            <h2 className="menu-title">Titulo</h2>
+            <h2 className="menu-title">Titulo do site </h2>
 
             <button className="btn-secondary" type="button" onClick={handleRecipeScreenOpen}>
               Receitas
@@ -143,6 +135,7 @@ function Login() {
             <button className="btn-theme" type="button" onClick={toggleTheme}>
               {isDarkMode ? 'Modo claro' : 'Modo noturno'}
             </button>
+
             <div className="top-user-menu" ref={userMenuRef}>
               <button
                 className="btn-user-trigger"
@@ -151,7 +144,9 @@ function Login() {
                 onClick={() => setIsUserMenuOpen((current) => !current)}
               >
                 <span className="user-name-inline">{auth.user.login}</span>
-                <span className="btn-user-icon" aria-hidden="true">👤</span>
+                <span className="btn-user-icon" aria-hidden="true">
+                  👤
+                </span>
               </button>
 
               {isUserMenuOpen && (
@@ -165,7 +160,6 @@ function Login() {
                 </div>
               )}
             </div>
-            
           </div>
         </div>
 
@@ -175,36 +169,12 @@ function Login() {
           <section className="profile-screen panel">
             <div className="profile-screen-header">
               <h3>Perfil do Usuário</h3>
-              <button type="button" className="btn-secondary" onClick={handleRecipeScreenOpen}>
-                Voltar para receitas
-              </button>
             </div>
 
             <UserProfileForm user={auth.user} onSubmit={auth.handleUserUpdate} />
-
-            <div className="profile-danger-zone">
-              <h4>Zona de perigo</h4>
-              <p>Excluir sua conta remove seu acesso ao sistema.</p>
-              <button type="button" className="btn-secondary btn-danger-action" onClick={handleDeleteUser}>
-                Excluir usuário
-              </button>
-            </div>
           </section>
         ) : (
           <div className="table-main-section">
-            <div className="table-screen-header">
-              
-              <button
-                className="btn-recipe-drawer"
-                type="button"
-                onClick={openRecipeDrawer}
-                aria-label="Abrir cadastro de receita"
-                title="Cadastrar receita"
-              >
-                <span aria-hidden="true">＋</span>
-              </button>
-            </div>
-
             <RecipeTable
               recipes={recipes.filteredRecipes}
               categories={recipes.categories}
@@ -213,6 +183,7 @@ function Login() {
               onEdit={handleEditRecipe}
               onDelete={recipes.handleDeleteRecipe}
               onPrint={recipes.handlePrintRecipe}
+              onOpenCreate={openRecipeDrawer}
             />
           </div>
         )}

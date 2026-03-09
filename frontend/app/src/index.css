@@ -273,6 +273,18 @@
     @apply mb-3 flex items-center justify-between;
   }
 
+  .recipe-list-toolbar {
+    @apply mb-4 flex items-center justify-between gap-3;
+  }
+
+  .recipe-add-square {
+    @apply h-11 w-11 shrink-0 rounded border border-primary bg-primary text-2xl font-semibold leading-none text-primary-foreground;
+  }
+
+  .recipe-search-input {
+    @apply ml-auto w-2/5 min-w-[240px] max-w-[520px];
+  }
+
   .profile-screen {
     @apply w-full;
   }
@@ -339,7 +351,7 @@
   }
 
   .search-input {
-    @apply mb-4;
+    @apply mb-0;
   }
 
   .empty-text {
@@ -355,24 +367,50 @@
   }
 
   .table-actions {
-    @apply flex flex-wrap gap-2;
+    @apply flex flex-nowrap gap-2;
   }
 
   .action-buttons {
-    @apply items-center justify-center gap-2;
+    @apply items-center justify-end gap-2;
   }
 
   .name-col {
     @apply text-left;
   }
 
-  .action-col, .category-col {
+  .recipe-name {
+    @apply m-0 font-semibold text-foreground;
+  }
+
+  .recipe-name-line {
+    @apply m-0 flex items-center gap-1;
+  }
+
+  .recipe-name-sep {
+    @apply text-muted-foreground;
+  }
+
+  .recipe-meta-list {
+    @apply m-0 mt-1 flex items-center gap-4 p-0 text-sm text-muted-foreground;
+    list-style: none;
+  }
+
+  .recipe-category-line {
+    @apply mt-1 flex items-center gap-2;
+  }
+
+  .category-bullet {
+    @apply text-lg leading-none text-muted-foreground;
+  }
+
+  .action-col,
+  .category-col {
     @apply text-center;
   }
 
   .compact-table th.action-col,
   .compact-table td.action-col {
-    @apply text-center;
+    @apply w-1/12 text-center;
   }
 
   .compact-table-wrap {
@@ -483,11 +521,19 @@
   }
 
   .recipe-modal-body {
-    @apply space-y-2 text-sm;
+    @apply space-y-2 text-sm text-justify;
+  }
+
+  .recipe-modal-grid {
+    @apply grid grid-cols-1 gap-2 md:grid-cols-2;
+  }
+
+  .recipe-modal-full-row {
+    @apply mb-1 mt-2;
   }
 
   .recipe-modal-content {
-    @apply rounded border border-border bg-muted p-3 whitespace-pre-wrap;
+    @apply rounded border border-border bg-muted p-3 whitespace-pre-wrap text-justify;
   }
 
   .recipe-modal-footer {
@@ -519,7 +565,11 @@
   }
 
   .table-pagination {
-    @apply mt-4 flex flex-wrap items-center justify-center gap-3;
+    @apply flex flex-wrap items-center justify-center gap-3;
+  }
+
+  .table-footer-actions {
+    @apply mt-4 flex flex-wrap items-center justify-end gap-3;
   }
 
   .pagination-label {
@@ -537,6 +587,18 @@
 
     .user-menu-popover {
       @apply left-0 right-auto w-[290px];
+    }
+
+    .recipe-search-input {
+      @apply w-full min-w-0;
+    }
+
+    .recipe-meta-list {
+      @apply flex-wrap gap-2;
+    }
+
+    .table-footer-actions {
+      @apply justify-center;
     }
 
     .action-buttons {

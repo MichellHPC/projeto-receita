@@ -1,6 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-function RecipeTable({ recipes, categories, searchTerm, onSearchTermChange, onEdit, onDelete, onPrint }) {
+function RecipeTable({
+  recipes,
+  categories,
+  searchTerm,
+  onSearchTermChange,
+  onEdit,
+  onDelete,
+  onPrint,
+  onOpenCreate,
+}) {
   const [openMenuId, setOpenMenuId] = useState(null);
   const [selectedRecipe, setSelectedRecipe] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -112,14 +121,27 @@ function RecipeTable({ recipes, categories, searchTerm, onSearchTermChange, onEd
 
   return (
     <div className="panel" ref={tableRef}>
-      <h3>Receitas Cadastradas</h3>
-      <input
-        type="text"
-        className="search-input"
-        placeholder="Pesquisar por ID, nome, preparo ou ingredientes"
-        value={searchTerm}
-        onChange={(e) => onSearchTermChange(e.target.value)}
-      />
+      <h3>Lista de receitas cadastradas</h3>
+
+      <div className="recipe-list-toolbar">
+        <button
+          type="button"
+          className="recipe-add-square"
+          onClick={onOpenCreate}
+          aria-label="Cadastrar receita"
+          title="Cadastrar receita"
+        >
+          +
+        </button>
+
+        <input
+          type="text"
+          className="search-input recipe-search-input"
+          placeholder="Pesquisar receita"
+          value={searchTerm}
+          onChange={(e) => onSearchTermChange(e.target.value)}
+        />
+      </div>
 
       {recipes.length === 0 ? (
         <p className="empty-text">Nenhuma receita encontrada.</p>
@@ -128,7 +150,7 @@ function RecipeTable({ recipes, categories, searchTerm, onSearchTermChange, onEd
           <table className="compact-table">
             <thead>
               <tr>
-                <th className="name-col">Nome</th>
+                <th className="name-col">Nome da receita</th>
                 <th className="category-col">Categoria</th>
                 <th className="action-col">Ações</th>
               </tr>
@@ -136,10 +158,26 @@ function RecipeTable({ recipes, categories, searchTerm, onSearchTermChange, onEd
             <tbody>
               {paginatedRecipes.map((recipe) => (
                 <tr key={recipe.id}>
-                  <td className="name-col">{recipe.nome}</td>
-                  <td className="category-col">
-                    <span className="category-badge">{getCategoryName(recipe.idCategoria)}</span>
+                  <td className="name-col">
+                    <p className="recipe-name-line">
+                      <span className="recipe-name">{recipe.nome}</span>
+                    </p>
+                    <ul className="recipe-meta-list">
+                      <li>
+                        <span className="category-bullet" aria-hidden="true">
+                          •
+                        </span>{' '}
+                        Quantidade servida: {recipe.porcoes || '-'}
+                      </li>
+                      <li>
+                        <span className="category-bullet" aria-hidden="true">
+                          •
+                        </span>{' '}
+                        Tempo de preparo: {recipe.tempoPreparoMinutos || '-'} min
+                      </li>
+                    </ul>
                   </td>
+                  <td className="category-col"><span className="category-badge">{getCategoryName(recipe.idCategoria)}</span></td>
                   <td className="action-col">
                     <div className="table-actions action-buttons">
                       <button
@@ -203,26 +241,28 @@ function RecipeTable({ recipes, categories, searchTerm, onSearchTermChange, onEd
       )}
 
       {recipes.length > 0 && (
-        <div className="table-pagination">
-          <button
-            type="button"
-            className="btn-secondary"
-            onClick={goToPreviousPage}
-            disabled={safeCurrentPage === 1}
-          >
-            Anterior
-          </button>
-          <span className="pagination-label">
-            Página {safeCurrentPage} de {totalPages}
-          </span>
-          <button
-            type="button"
-            className="btn-secondary"
-            onClick={goToNextPage}
-            disabled={safeCurrentPage === totalPages}
-          >
-            Próxima
-          </button>
+        <div className="table-footer-actions">
+          <div className="table-pagination">
+            <button
+              type="button"
+              className="btn-secondary"
+              onClick={goToPreviousPage}
+              disabled={safeCurrentPage === 1}
+            >
+              Anterior
+            </button>
+            <span className="pagination-label">
+              Página {safeCurrentPage} de {totalPages}
+            </span>
+            <button
+              type="button"
+              className="btn-secondary"
+              onClick={goToNextPage}
+              disabled={safeCurrentPage === totalPages}
+            >
+              Próxima
+            </button>
+          </div>
         </div>
       )}
 
@@ -244,26 +284,28 @@ function RecipeTable({ recipes, categories, searchTerm, onSearchTermChange, onEd
             </div>
 
             <div className="recipe-modal-body">
-              <p>
-                <strong>ID:</strong> {selectedRecipe.id}
-              </p>
-              <p>
-                <strong>Nome:</strong> {selectedRecipe.nome}
-              </p>
-              <p>
-                <strong>Categoria:</strong> {getCategoryName(selectedRecipe.idCategoria)}
-              </p>
-              <p>
-                <strong>Tempo de preparo:</strong> {selectedRecipe.tempoPreparoMinutos || '-'} min
-              </p>
-              <p>
-                <strong>Porções:</strong> {selectedRecipe.porcoes || '-'}
-              </p>
-              <p>
+              <div className="recipe-modal-grid">
+                <p>
+                  <strong>ID:</strong> {selectedRecipe.id}
+                </p>
+                <p>
+                  <strong>Categoria:</strong> {getCategoryName(selectedRecipe.idCategoria)}
+                </p>
+                <p>
+                  <strong>Nome:</strong> {selectedRecipe.nome}
+                </p>
+                <p>
+                  <strong>Porções:</strong> {selectedRecipe.porcoes || '-'}
+                </p>
+                <p>
+                  <strong>Tempo de preparo:</strong> {selectedRecipe.tempoPreparoMinutos || '-'} min
+                </p>
+              </div>
+              <p className="recipe-modal-full-row">
                 <strong>Ingredientes:</strong>
               </p>
               <div className="recipe-modal-content">{selectedRecipe.ingredientes || '-'}</div>
-              <p>
+              <p className="recipe-modal-full-row">
                 <strong>Modo de preparo:</strong>
               </p>
               <div className="recipe-modal-content">{selectedRecipe.modoPreparo}</div>
