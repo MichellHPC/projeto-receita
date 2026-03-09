@@ -130,11 +130,13 @@
   }
 
   input,
+  select,
   textarea {
     @apply w-full rounded border border-border bg-input px-3 py-3 text-foreground outline-none transition;
   }
 
   input:focus,
+  select:focus,
   textarea:focus {
     @apply ring-2 ring-ring;
   }

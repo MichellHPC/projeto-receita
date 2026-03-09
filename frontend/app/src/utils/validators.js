@@ -1,15 +1,14 @@
-export const validateEmail = (value) => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(value);
+export const validateLogin = (value) => {
+  return value.trim().length >= 3;
 };
 
-export const validateAuthData = ({ mode, nome, email, password, confirmPassword }) => {
+export const validateAuthData = ({ mode, nome, login, password, confirmPassword }) => {
   if (mode === 'register' && (!nome.trim() || nome.trim().length < 3)) {
     return 'O nome deve ter no mínimo 3 caracteres.';
   }
 
-  if (!validateEmail(email)) {
-    return 'Informe um e-mail válido.';
+  if (!validateLogin(login)) {
+    return 'O login deve ter no mínimo 3 caracteres.';
   }
 
   if (password.length < 6) {
@@ -25,13 +24,13 @@ export const validateAuthData = ({ mode, nome, email, password, confirmPassword 
   return '';
 };
 
-export const validateUserUpdateData = ({ nome, email, password }) => {
+export const validateUserUpdateData = ({ nome, login, password }) => {
   if (!nome.trim() || nome.trim().length < 3) {
     return 'O nome deve ter no mínimo 3 caracteres.';
   }
 
-  if (!validateEmail(email)) {
-    return 'Informe um e-mail válido.';
+  if (!validateLogin(login)) {
+    return 'O login deve ter no mínimo 3 caracteres.';
   }
 
   if (password.trim() && password.trim().length < 6) {
@@ -41,13 +40,21 @@ export const validateUserUpdateData = ({ nome, email, password }) => {
   return '';
 };
 
-export const validateRecipeData = ({ recipeNome, recipeTexto }) => {
+export const validateRecipeData = ({ recipeNome, recipeModoPreparo, recipeTempoPreparo, recipePorcoes }) => {
   if (!recipeNome.trim() || recipeNome.trim().length < 3) {
     return 'O nome da receita deve ter no mínimo 3 caracteres.';
   }
 
-  if (!recipeTexto.trim() || recipeTexto.trim().length < 10) {
-    return 'A descrição da receita deve ter no mínimo 10 caracteres.';
+  if (!recipeModoPreparo.trim() || recipeModoPreparo.trim().length < 10) {
+    return 'O modo de preparo deve ter no mínimo 10 caracteres.';
+  }
+
+  if (recipeTempoPreparo && Number(recipeTempoPreparo) <= 0) {
+    return 'O tempo de preparo deve ser maior que zero.';
+  }
+
+  if (recipePorcoes && Number(recipePorcoes) <= 0) {
+    return 'As porções devem ser maiores que zero.';
   }
 
   return '';

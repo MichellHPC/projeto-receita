@@ -20,7 +20,7 @@ const getRequestErrorMessage = (requestError, fallbackMessage) => {
 function useAuth() {
   const [mode, setMode] = useState('login');
   const [nome, setNome] = useState('');
-  const [email, setEmail] = useState('');
+  const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [user, setUser] = useState(null);
@@ -54,7 +54,7 @@ function useAuth() {
     const validationMessage = validateAuthData({
       mode,
       nome,
-      email,
+      login,
       password,
       confirmPassword,
     });
@@ -68,7 +68,7 @@ function useAuth() {
       try {
         await axios.post(`${API_BASE_URL}/usuarios`, {
           nome: nome.trim(),
-          email: email.trim(),
+          login: login.trim(),
           password,
         });
 
@@ -86,13 +86,13 @@ function useAuth() {
 
     try {
       const response = await axios.post(`${API_BASE_URL}/login`, {
-        email,
+        login,
         password,
       });
 
-      const apiUser = response?.data?.user;
+      const apiUser = response?.data?.user || response?.data?.usuario || response?.data;
 
-      if (!apiUser?.email) {
+      if (!apiUser?.login) {
         setError('Resposta de login inválida do servidor.');
         return;
       }
@@ -100,7 +100,7 @@ function useAuth() {
       const sessionUser = {
         id: apiUser.id,
         name: apiUser.name || apiUser.nome || '',
-        email: apiUser.email,
+        login: apiUser.login,
       };
 
       saveSessionUser(sessionUser);
@@ -111,7 +111,7 @@ function useAuth() {
       setSuccess(response?.data?.message || 'Login realizado com sucesso.');
     } catch (requestError) {
       if (requestError?.response?.status === 401) {
-        setError('Email ou senha incorretos.');
+        setError('Login ou senha incorretos.');
         return;
       }
 
@@ -119,7 +119,7 @@ function useAuth() {
     }
   };
 
-  const handleUserUpdate = async ({ nome: nextNome, email: nextEmail, password: nextPassword }) => {
+  const handleUserUpdate = async ({ nome: nextNome, login: nextLogin, password: nextPassword }) => {
     clearMessages();
 
     if (!user?.id) {
@@ -129,7 +129,7 @@ function useAuth() {
 
     const validationMessage = validateUserUpdateData({
       nome: nextNome,
-      email: nextEmail,
+      login: nextLogin,
       password: nextPassword,
     });
 
@@ -141,7 +141,7 @@ function useAuth() {
     try {
       const payload = {
         nome: nextNome.trim(),
-        email: nextEmail.trim(),
+        login: nextLogin.trim(),
       };
 
       if (nextPassword.trim()) {
@@ -154,7 +154,7 @@ function useAuth() {
       const updatedUser = {
         id: user.id,
         name: apiUser.name || apiUser.nome || payload.nome,
-        email: apiUser.email || payload.email,
+        login: apiUser.login || payload.login,
       };
 
       saveSessionUser(updatedUser);
@@ -171,7 +171,7 @@ function useAuth() {
     clearSessionUser();
     setUser(null);
     setNome('');
-    setEmail('');
+    setLogin('');
     setPassword('');
     setConfirmPassword('');
     setMode('login');
@@ -181,14 +181,14 @@ function useAuth() {
   return {
     mode,
     nome,
-    email,
+    login,
     password,
     confirmPassword,
     user,
     error,
     success,
     setNome,
-    setEmail,
+    setLogin,
     setPassword,
     setConfirmPassword,
     clearMessages,

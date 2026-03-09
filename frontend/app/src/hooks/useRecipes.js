@@ -7,9 +7,29 @@ const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3000';
 
 const normalizeRecipe = (recipe) => ({
   id: recipe?.id || recipe?.receita_id || '',
+  idCategoria: recipe?.id_categorias ?? null,
   nome: recipe?.nome || '',
-  texto: recipe?.descricao || recipe?.texto || '',
+  tempoPreparoMinutos: recipe?.tempo_preparo_minutos ?? '',
+  porcoes: recipe?.porcoes ?? '',
+  modoPreparo: recipe?.modo_preparo || recipe?.descricao || recipe?.texto || '',
+  ingredientes: recipe?.ingredientes || '',
 });
+
+const CATEGORY_OPTIONS = [
+  { id: 1, nome: 'Bolos e tortas doces' },
+  { id: 2, nome: 'Carnes' },
+  { id: 3, nome: 'Aves' },
+  { id: 4, nome: 'Peixes e frutos do mar' },
+  { id: 5, nome: 'Saladas, molhos e acompanhamentos' },
+  { id: 6, nome: 'Sopas' },
+  { id: 7, nome: 'Massas' },
+  { id: 8, nome: 'Bebidas' },
+  { id: 9, nome: 'Doces e sobremesas' },
+  { id: 10, nome: 'Lanches' },
+  { id: 11, nome: 'Prato Único' },
+  { id: 12, nome: 'Light' },
+  { id: 13, nome: 'Alimentação Saudável' },
+];
 
 const getRequestErrorMessage = (requestError, fallbackMessage) => {
   if (!requestError?.response) {
@@ -21,8 +41,12 @@ const getRequestErrorMessage = (requestError, fallbackMessage) => {
 
 function useRecipes({ user, setError, setSuccess, clearMessages }) {
   const [recipes, setRecipes] = useState([]);
+  const [recipeCategoriaId, setRecipeCategoriaId] = useState('');
   const [recipeNome, setRecipeNome] = useState('');
-  const [recipeTexto, setRecipeTexto] = useState('');
+  const [recipeTempoPreparo, setRecipeTempoPreparo] = useState('');
+  const [recipePorcoes, setRecipePorcoes] = useState('');
+  const [recipeIngredientes, setRecipeIngredientes] = useState('');
+  const [recipeModoPreparo, setRecipeModoPreparo] = useState('');
   const [editingId, setEditingId] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -58,15 +82,20 @@ function useRecipes({ user, setError, setSuccess, clearMessages }) {
 
     return recipes.filter(
       (recipe) =>
-        recipe.id.toLowerCase().includes(term) ||
+        String(recipe.id).toLowerCase().includes(term) ||
         recipe.nome.toLowerCase().includes(term) ||
-        recipe.texto.toLowerCase().includes(term)
+        recipe.modoPreparo.toLowerCase().includes(term) ||
+        recipe.ingredientes.toLowerCase().includes(term)
     );
   }, [recipes, searchTerm]);
 
   const resetRecipeForm = () => {
+    setRecipeCategoriaId('');
     setRecipeNome('');
-    setRecipeTexto('');
+    setRecipeTempoPreparo('');
+    setRecipePorcoes('');
+    setRecipeIngredientes('');
+    setRecipeModoPreparo('');
     setEditingId(null);
   };
 
@@ -76,7 +105,9 @@ function useRecipes({ user, setError, setSuccess, clearMessages }) {
 
     const validationMessage = validateRecipeData({
       recipeNome,
-      recipeTexto,
+      recipeModoPreparo,
+      recipeTempoPreparo,
+      recipePorcoes,
     });
 
     if (validationMessage) {
@@ -90,8 +121,13 @@ function useRecipes({ user, setError, setSuccess, clearMessages }) {
     }
 
     const payload = {
+      id_usuarios: user.id,
+      id_categorias: recipeCategoriaId ? Number(recipeCategoriaId) : null,
       nome: recipeNome.trim(),
-      descricao: recipeTexto.trim(),
+      tempo_preparo_minutos: recipeTempoPreparo ? Number(recipeTempoPreparo) : null,
+      porcoes: recipePorcoes ? Number(recipePorcoes) : null,
+      modo_preparo: recipeModoPreparo.trim(),
+      ingredientes: recipeIngredientes.trim() || null,
     };
 
     try {
@@ -102,8 +138,12 @@ function useRecipes({ user, setError, setSuccess, clearMessages }) {
             recipe.id === editingId
               ? {
                   ...recipe,
+                  idCategoria: payload.id_categorias,
                   nome: payload.nome,
-                  texto: payload.descricao,
+                  tempoPreparoMinutos: payload.tempo_preparo_minutos || '',
+                  porcoes: payload.porcoes || '',
+                  modoPreparo: payload.modo_preparo,
+                  ingredientes: payload.ingredientes || '',
                 }
               : recipe
           )
@@ -114,7 +154,6 @@ function useRecipes({ user, setError, setSuccess, clearMessages }) {
       }
 
       const response = await axios.post(`${API_BASE_URL}/receitas`, {
-        criador_id: user.id,
         ...payload,
       });
 
@@ -138,8 +177,12 @@ function useRecipes({ user, setError, setSuccess, clearMessages }) {
   const handleEditRecipe = (recipe) => {
     clearMessages();
     setEditingId(recipe.id);
+    setRecipeCategoriaId(recipe.idCategoria ? String(recipe.idCategoria) : '');
     setRecipeNome(recipe.nome);
-    setRecipeTexto(recipe.texto);
+    setRecipeTempoPreparo(recipe.tempoPreparoMinutos ? String(recipe.tempoPreparoMinutos) : '');
+    setRecipePorcoes(recipe.porcoes ? String(recipe.porcoes) : '');
+    setRecipeIngredientes(recipe.ingredientes || '');
+    setRecipeModoPreparo(recipe.modoPreparo || '');
   };
 
   const handleDeleteRecipe = async (id) => {
@@ -177,13 +220,22 @@ function useRecipes({ user, setError, setSuccess, clearMessages }) {
   };
 
   return {
+    categories: CATEGORY_OPTIONS,
+    recipeCategoriaId,
     recipeNome,
-    recipeTexto,
+    recipeTempoPreparo,
+    recipePorcoes,
+    recipeIngredientes,
+    recipeModoPreparo,
     editingId,
     searchTerm,
     filteredRecipes,
+    setRecipeCategoriaId,
     setRecipeNome,
-    setRecipeTexto,
+    setRecipeTempoPreparo,
+    setRecipePorcoes,
+    setRecipeIngredientes,
+    setRecipeModoPreparo,
     setSearchTerm,
     handleRecipeSubmit,
     handleEditRecipe,

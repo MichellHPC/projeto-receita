@@ -47,7 +47,7 @@ function Login() {
         <div className="top-bar">
           <div>
             <h2>Painel de Receitas</h2>
-            <p className="user-label">Usuário: {auth.user.email}</p>
+            <p className="user-label">Usuário: {auth.user.login}</p>
           </div>
           <div className="top-actions">
             <button className="btn-theme" type="button" onClick={toggleTheme}>
@@ -65,17 +65,27 @@ function Login() {
 
         <div className="content-grid">
           <RecipeForm
+            categories={recipes.categories}
             editingId={recipes.editingId}
+            recipeCategoriaId={recipes.recipeCategoriaId}
             recipeNome={recipes.recipeNome}
-            recipeTexto={recipes.recipeTexto}
+            recipeTempoPreparo={recipes.recipeTempoPreparo}
+            recipePorcoes={recipes.recipePorcoes}
+            recipeIngredientes={recipes.recipeIngredientes}
+            recipeModoPreparo={recipes.recipeModoPreparo}
+            onRecipeCategoriaIdChange={recipes.setRecipeCategoriaId}
             onRecipeNomeChange={recipes.setRecipeNome}
-            onRecipeTextoChange={recipes.setRecipeTexto}
+            onRecipeTempoPreparoChange={recipes.setRecipeTempoPreparo}
+            onRecipePorcoesChange={recipes.setRecipePorcoes}
+            onRecipeIngredientesChange={recipes.setRecipeIngredientes}
+            onRecipeModoPreparoChange={recipes.setRecipeModoPreparo}
             onSubmit={recipes.handleRecipeSubmit}
             onCancelEdit={recipes.resetRecipeForm}
           />
 
           <RecipeTable
             recipes={recipes.filteredRecipes}
+            categories={recipes.categories}
             searchTerm={recipes.searchTerm}
             onSearchTermChange={recipes.setSearchTerm}
             onEdit={recipes.handleEditRecipe}
@@ -98,11 +108,11 @@ function Login() {
       <AuthForm
         mode={auth.mode}
         nome={auth.nome}
-        email={auth.email}
+        login={auth.login}
         password={auth.password}
         confirmPassword={auth.confirmPassword}
         onNomeChange={auth.setNome}
-        onEmailChange={auth.setEmail}
+        onLoginChange={auth.setLogin}
         onPasswordChange={auth.setPassword}
         onConfirmPasswordChange={auth.setConfirmPassword}
         onSubmit={auth.handleAuthSubmit}

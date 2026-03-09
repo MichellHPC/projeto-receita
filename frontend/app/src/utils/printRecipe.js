@@ -19,7 +19,12 @@ export const printRecipe = (recipe) => {
       <body>
         <h1>${recipe.nome}</h1>
         <p><strong>ID:</strong> ${recipe.id}</p>
-        <div class="content">${recipe.texto}</div>
+        <p><strong>Tempo de preparo:</strong> ${recipe.tempoPreparoMinutos || '-'}</p>
+        <p><strong>Porções:</strong> ${recipe.porcoes || '-'}</p>
+        <p><strong>Ingredientes:</strong></p>
+        <div class="content">${recipe.ingredientes || '-'}</div>
+        <p><strong>Modo de preparo:</strong></p>
+        <div class="content">${recipe.modoPreparo}</div>
       </body>
     </html>
   `);

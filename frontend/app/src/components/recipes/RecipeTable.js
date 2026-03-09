@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
-function RecipeTable({ recipes, searchTerm, onSearchTermChange, onEdit, onDelete, onPrint }) {
+function RecipeTable({ recipes, categories, searchTerm, onSearchTermChange, onEdit, onDelete, onPrint }) {
   const [openMenuId, setOpenMenuId] = useState(null);
   const tableRef = useRef(null);
 
@@ -27,13 +27,18 @@ function RecipeTable({ recipes, searchTerm, onSearchTermChange, onEdit, onDelete
     action();
   };
 
+  const getCategoryName = (idCategoria) => {
+    const category = categories.find((item) => item.id === Number(idCategoria));
+    return category?.nome || '-';
+  };
+
   return (
     <div className="panel" ref={tableRef}>
       <h3>Receitas Cadastradas</h3>
       <input
         type="text"
         className="search-input"
-        placeholder="Pesquisar por ID, nome ou texto"
+        placeholder="Pesquisar por ID, nome, preparo ou ingredientes"
         value={searchTerm}
         onChange={(e) => onSearchTermChange(e.target.value)}
       />
@@ -47,7 +52,11 @@ function RecipeTable({ recipes, searchTerm, onSearchTermChange, onEdit, onDelete
               <tr>
                 <th>ID</th>
                 <th>Nome</th>
-                <th>Descrição</th>
+                <th>Categoria</th>
+                <th>Tempo</th>
+                <th>Porções</th>
+                <th>Modo de preparo</th>
+                <th>Ingredientes</th>
                 <th>Ações</th>
               </tr>
             </thead>
@@ -56,7 +65,11 @@ function RecipeTable({ recipes, searchTerm, onSearchTermChange, onEdit, onDelete
                 <tr key={recipe.id}>
                   <td>{recipe.id}</td>
                   <td>{recipe.nome}</td>
-                  <td className="text-col">{recipe.texto}</td>
+                  <td>{getCategoryName(recipe.idCategoria)}</td>
+                  <td>{recipe.tempoPreparoMinutos || '-'}</td>
+                  <td>{recipe.porcoes || '-'}</td>
+                  <td className="text-col">{recipe.modoPreparo}</td>
+                  <td className="text-col">{recipe.ingredientes || '-'}</td>
                   <td>
                     <div className="table-actions dropdown-wrap">
                       <button

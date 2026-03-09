@@ -2,19 +2,19 @@ import { useEffect, useState } from 'react';
 
 function UserProfileForm({ user, onSubmit }) {
   const [nome, setNome] = useState('');
-  const [email, setEmail] = useState('');
+  const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
 
   useEffect(() => {
     setNome(user?.name || '');
-    setEmail(user?.email || '');
+    setLogin(user?.login || '');
     setPassword('');
   }, [user]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const ok = await onSubmit({ nome, email, password });
+    const ok = await onSubmit({ nome, login, password });
     if (ok) {
       setPassword('');
     }
@@ -34,13 +34,13 @@ function UserProfileForm({ user, onSubmit }) {
           required
         />
 
-        <label htmlFor="profile-email">Email</label>
+        <label htmlFor="profile-login">Login</label>
         <input
-          id="profile-email"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="email@dominio.com"
+          id="profile-login"
+          type="text"
+          value={login}
+          onChange={(e) => setLogin(e.target.value)}
+          placeholder="usuario.login"
           required
         />
 

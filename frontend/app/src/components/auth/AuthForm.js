@@ -1,11 +1,11 @@
 function AuthForm({
   mode,
   nome,
-  email,
+  login,
   password,
   confirmPassword,
   onNomeChange,
-  onEmailChange,
+  onLoginChange,
   onPasswordChange,
   onConfirmPasswordChange,
   onSubmit,
@@ -28,11 +28,11 @@ function AuthForm({
         )}
 
         <input
-          type="email"
-          id="email"
-          value={email}
-          onChange={(e) => onEmailChange(e.target.value)}
-          placeholder="Digite seu email"
+          type="text"
+          id="login"
+          value={login}
+          onChange={(e) => onLoginChange(e.target.value)}
+          placeholder="Digite seu login"
           required
         />
         <input
