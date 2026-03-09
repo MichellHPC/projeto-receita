@@ -26,25 +26,13 @@ export const validateAuthData = ({ mode, email, password, confirmPassword, users
   return '';
 };
 
-export const validateRecipeData = ({ recipeId, recipeNome, recipeTexto, recipes, editingId }) => {
-  if (!recipeId.trim()) {
-    return 'O campo ID da receita é obrigatório.';
-  }
-
+export const validateRecipeData = ({ recipeNome, recipeTexto }) => {
   if (!recipeNome.trim() || recipeNome.trim().length < 3) {
     return 'O nome da receita deve ter no mínimo 3 caracteres.';
   }
 
   if (!recipeTexto.trim() || recipeTexto.trim().length < 10) {
     return 'A descrição da receita deve ter no mínimo 10 caracteres.';
-  }
-
-  const idAlreadyUsed = recipes.some(
-    (recipe) => recipe.id.toLowerCase() === recipeId.trim().toLowerCase() && recipe.id !== editingId
-  );
-
-  if (idAlreadyUsed) {
-    return 'Já existe uma receita com esse ID.';
   }
 
   return '';

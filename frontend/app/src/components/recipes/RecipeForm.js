@@ -1,9 +1,7 @@
 function RecipeForm({
   editingId,
-  recipeId,
   recipeNome,
   recipeTexto,
-  onRecipeIdChange,
   onRecipeNomeChange,
   onRecipeTextoChange,
   onSubmit,
@@ -13,16 +11,6 @@ function RecipeForm({
     <div className="panel">
       <h3>{editingId ? 'Editar Receita' : 'Cadastro de Receita'}</h3>
       <form className="recipe-form" onSubmit={onSubmit}>
-        <label htmlFor="recipe-id">ID</label>
-        <input
-          id="recipe-id"
-          type="text"
-          value={recipeId}
-          onChange={(e) => onRecipeIdChange(e.target.value)}
-          placeholder="Ex: RC001"
-          required
-        />
-
         <label htmlFor="recipe-nome">Nome</label>
         <input
           id="recipe-nome"

@@ -37,10 +37,8 @@ function Login() {
         <div className="content-grid">
           <RecipeForm
             editingId={recipes.editingId}
-            recipeId={recipes.recipeId}
             recipeNome={recipes.recipeNome}
             recipeTexto={recipes.recipeTexto}
-            onRecipeIdChange={recipes.setRecipeId}
             onRecipeNomeChange={recipes.setRecipeNome}
             onRecipeTextoChange={recipes.setRecipeTexto}
             onSubmit={recipes.handleRecipeSubmit}
